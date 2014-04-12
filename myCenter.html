@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>个人中心</title>
+    <script src="javascript/jquery-1.10.2.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+        $(function () {
+            getUser();
+            getRole();
+        })
+
+        function getUser() {
+            var url = "/Handler/LoginHandler.ashx";
+            var data = { action: "getUser" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    $("#sName").text(res.info);
+                }
+            });
+        }
+
+        function getRole() {
+            var url = "/Handler/LoginHandler.ashx";
+            var data = { action: "getRole" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    if (res.info = "1") {
+                        $("#sRole").text("普通用户");
+                    }
+                    else {
+                        $("#sRole").text("管理员");
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body style="background:#f1f7fa">
+ <p style="text-align: center;">
+        <span style="font-family: 黑体, SimHei; font-size: 36px;"><strong>个人中心</strong></span></p>
+    <p>
+        <span style="font-family: 黑体, SimHei; font-size: 14px;">一、系统角色及权限</span></p>
+    <p>
+        <span style="font-family: 黑体, SimHei; font-size: 14px;">&nbsp;&nbsp;&nbsp; 系统分为管理员和普通用户两种角色。</span></p>
+    <p>
+        <span style="font-family: 黑体, SimHei; font-size: 14px;">&nbsp;&nbsp;&nbsp; 管理员拥有权限：教师信息管理，教学信息发布，教学模板上传，教学文件管理，用户信息管理，系统帮助，个人中心。</span></p>
+    <p>
+        <span style="font-family: 黑体, SimHei; font-size: 14px;">&nbsp;&nbsp;&nbsp; 普通用户拥有权限：浏览教学信息，教学模板下载，教学文件提交，<span
+            style="font-family: 黑体;">系统帮助，个人中心。</span></span></p>
+
+    <p>
+        <span style="font-family: 黑体, SimHei; font-size: 14px;">二、个人信息</span></p>
+    <p>
+        <span style="font-family: 黑体, SimHei; font-size: 14px;">&nbsp;&nbsp;&nbsp; 用户名：</span><span id="sName"></span></p>
+    <p>
+        <span style="font-family: 黑体, SimHei; font-size: 14px;">&nbsp;&nbsp;&nbsp; 角色：<span id="sRole"></span></span></p>
+</body>
+</html>

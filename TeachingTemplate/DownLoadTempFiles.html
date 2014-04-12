@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>教学模板下载</title> 
+    <link href="/images/style.css" rel="stylesheet" type="text/css" />
+    <script src="../javascript/jquery-1.10.2.js" type="text/javascript"></script>
+     <script src="../ui/jquery-ui.js" type="text/javascript"></script>
+    <script src="../javascript/common.js" type="text/javascript"></script>
+   
+    <link href="../themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../javascript/jquery.jdownload.js" type="text/javascript"></script>
+    <link href="../Styles/jquery.jdownload.css" rel="stylesheet" type="text/css" />
+
+    <script language="javascript" type="text/javascript">
+        function InitData() {
+            var url = "/TeachingTemplate/TeachingTemplateHandler.ashx";
+            var data = { action: "getList" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    createHtml(res.info);
+                }
+            });
+        }
+
+        function createHtml(info) {
+            $("#divTest").html("");
+            var content = "";
+            if (info.length > 0) {
+                for (var i = 0; i < info.length; i++) {
+                    content += " <tr><td>";
+                    content += info[i].TempName + "</td>";
+                    content += " <td>" + info[i].TempDesc + "</td>"; //描述
+                    content += " <td>" + info[i].CreateTime + "</td>";
+                    content += " <td>" + info[i].PersonName + "</td>";
+                    content += " <td><a title=\"下载模板\" class=\"download\" style=\"cursor:pointer; color:Blue;\" href=\"/TeachingTemplate/TempFiles/" + info[i].TempName + "\">下载模板</a>";
+                    content += "</tr>";
+                }
+                $("#divTest").html(content);
+            }
+        }
+
+        function DownloadTemp(tempName) {
+            var path = "/TeachingTemplate/TempFiles/" + tempName;
+            window.open(paths);
+        }
+
+        $(function () {
+            InitData();
+            $('.download').jDownload();
+        })
+    </script>
+</head>
+<body>
+    <div id="contentWrap">
+        <!--表格控件 -->
+        <div id="widget table-widget">
+            <div class="pageTitle">
+                教学模板下载
+            </div>
+            <div class="pageColumn">
+                <table>
+                    <thead>
+                        <th width="10%">
+                            模板名称
+                        </th>
+                        <th width="10%">
+                            模板描述
+                        </th>
+                        <th width="10%">
+                            上传时间
+                        </th>
+                        <th width="10%">
+                            上传人
+                        </th>
+                        <th width="15%">
+                            下载
+                        </th>
+                    </thead>
+                    <tbody id="divTest">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>易用教学管理系统首页</title>
+    <link href="images/style.css" rel="stylesheet" type="text/css" />
+   
+    <script type="text/javascript" src="javascript/jquery.min.js"></script>
+    <script src="../javascript/common.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var loginuser = "";
+        $(function () {
+            getUser();
+            InitData();
+            getRole();
+            //	//setMenuHeight
+            $('.menu').height($(window).height() - 51 - 27 - 26 - 5);
+            $('.sidebar').height($(window).height() - 51 - 27 - 26 - 5);
+            $('.page').height($(window).height() - 51 - 27 - 26 - 5);
+            $('.page').width($(window).width() - 15 - 168);
+
+            //menu on and off
+            $('.btn').click(function () {
+                $('.menu').toggle();
+
+                if ($(".menu").is(":hidden")) {
+                    $('.page').width($(window).width() - 15 + 5);
+                } else {
+                    $('.page').width($(window).width() - 15 - 168);
+                }
+            });
+        })
+
+        function loadRightDiv(path) {
+            $("#rightMain").load(path);
+            //    $("#rightMain").attr("src", path);
+        }
+
+        function InitData() {
+            var url = "/Handler/LoginHandler.ashx";
+            var data = { action: "getRights" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    for (var i = 0; i < res.info.length; i++) {
+                        $("#" + res.info[i].ModulePath).css("display", "block");
+                    }
+                }
+            });
+        }
+
+        function getUser() {
+            var url = "/Handler/LoginHandler.ashx";
+            var data = { action: "getUser" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    $("#loginName").text(res.info);
+                }
+            });
+        }
+
+        function getRole() {
+            var url = "/Handler/LoginHandler.ashx";
+            var data = { action: "getRole" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    if (res.info = "1") {
+                        loadRightDiv('/TeachingInfo/ShowTeachInfo.html');
+                    }
+                    else {
+                        loadRightDiv('/TeachingInfo/TeachingInfoAdd.html');
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body style="overflow-y: hidden">
+    <div id="wrap">
+        <div id="header">
+            <div class="logo fleft">
+            </div>
+            <!--<div class="nav fleft">
+    	<ul>
+        	<div class="nav-left fleft"></div>
+            <li class="first"><a href="#">我的面板</a></li>
+        	<li><a href="#">设置</a></li>
+            <li><a href="#">模块</a></li>
+            <li><a href="#">内容</a></li>
+            <li><a href="#">用户</a></li>
+            <li><a href="#">扩展</a></li>
+            <li><a href="#">应用</a></li>
+            <div class="nav-right fleft"></div>
+        </ul>
+    </div>-->
+            <a class="logout fright" href="login.html" title="退出系统"></a>
+            <div class="fright" style="margin-top: 20px; margin: 14px; color: #dbf2ff; font-size: 14px;">
+                <a style="color: #dbf2ff; cursor:pointer;" onclick="loadRightDiv('/myCenter.html');">profile</a></div>
+            <div class="clear">
+            </div>
+            <div class="subnav">
+                <div class="subnavLeft fleft">
+                </div>
+                <div class="fleft" style="margin-top: 5px;">
+                    欢迎<span id="loginName"></span>登录系统</div>
+                <div class="subnavRight fright">
+                </div>
+            </div>
+        </div>
+        <!--#header -->
+        <div id="content">
+            <div class="space">
+            </div>
+            <div class="menu fleft" style="width: 13.5%;">
+                <ul>
+                    <li class="subMenuTitle">易用教学系统菜单</li>
+                    <li style="display: none" class="subMenu" id="TeacherInfoMgr"><a onclick="loadRightDiv('/TeacherInfoMgr/TeacherInfo.html');">
+                        教师信息管理</a> </li>
+                    <li style="display: none" class="subMenu" id="TeachingInfoPublish"><a onclick="loadRightDiv('/TeachingInfo/TeachingInfoAdd.html');">
+                        教学信息发布</a> </li>
+                    <li style="display: none" class="subMenu" id="TeachingTemplateUpload"><a onclick="loadRightDiv('/TeachingTemplate/UploadTempFiles.html');">
+                        教学模板上传</a> </li>
+                    <li class="subMenu" id="TeachingFileMgr"><a onclick="loadRightDiv('/TeachingFileMgr/DownLoadTeachFiles.html');">
+                        教学文件管理</a> </li>
+                    <li style="display: none" class="subMenu" id="BrowseTeachingInfo"><a onclick="loadRightDiv('/TeachingInfo/ShowTeachInfo.html');">
+                        浏览教学信息</a> </li>
+                    <li style="display: none" class="subMenu" id="TeachingTemplateDownLoad"><a onclick="loadRightDiv('/TeachingTemplate/DownLoadTempFiles.html');">
+                        教学模板下载</a> </li>
+                    <li style="display: none" class="subMenu" id="TeachingFileUpload"><a onclick="loadRightDiv('/TeachingFileMgr/UploadTeachFiles.html');">
+                        教学文件提交</a> </li>
+                         <li style="display: none" class="subMenu" id="UserMgr"><a onclick="loadRightDiv('/UserMgr.html');">
+                        用户信息管理</a> </li>
+                    <li class="subMenu" id="help"><a onclick="loadRightDiv('/help.html');">系统帮助</a> </li>
+                    <li class="subMenu"><a onclick="loadRightDiv('/myCenter.html');">个人中心</a> </li>
+                </ul>
+            </div>
+            <div class="sidebar fleft" style="width: 1px;">
+                <div class="btn">
+                </div>
+            </div>
+            <div class="page" style="width: 86%; float: right">
+                <!--   <iframe id="rightDiv" width="100%" scrolling="auto" height="100%" frameborder="false" allowtransparency="true" style="border: medium none;" src="/TeacherInfoMgr/TeacherInfo.html" id="rightMain" name="right"></iframe>-->
+                <div id="rightMain" style="width: 100%;">
+                </div>
+            </div>
+        </div>
+        <!--#content -->
+        <div class="clear">
+        </div>
+        <div id="footer">
+            CopyRight &copy; 2014-2024 版权所有
+        </div>
+        <!--#footer -->
+    </div>
+    <!--#wrap -->
+</body>
+</html>

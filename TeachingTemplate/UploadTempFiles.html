@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>教学模板上传</title>
+    <link href="/images/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/javascript/jquery.min.js"></script>
+    <script src="../javascript/common.js" type="text/javascript"></script>
+    <script src="../javascript/ajaxfileupload.js" type="text/javascript"></script>
+
+     <script src="../ui/jquery-ui.js" type="text/javascript"></script>
+    <link href="../themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../javascript/jquery.jdownload.js" type="text/javascript"></script>
+    <link href="../Styles/jquery.jdownload.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        function ajaxFileUpload() {
+            $("#loading").ajaxStart(function () {
+                $(this).show();
+            }).ajaxComplete(function () {
+                $(this).hide();
+            });
+
+            $.ajaxFileUpload({
+                url: '/TeachingTemplate/TeachingTemplateHandler.ashx',
+                secureuri: false,
+                fileElementId: 'fileToUpload',
+                dataType: 'json',
+                data: { action: 'getFile', tempdesc: $("#txtDesc").val() },
+                success: function (data, status) {
+                    alert(data.info);
+                    $("#txtDesc").val(""); //清空描述信息
+                    InitData();
+                },
+                error: function (data, status, e) {
+                    alert(e);
+                }
+            }
+        )
+            return false;
+        }
+
+        function InitData() {
+            var url = "/TeachingTemplate/TeachingTemplateHandler.ashx";
+            var data = { action: "getList" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    createHtml(res.info);
+                }
+            });
+        }
+
+        function createHtml(info) {
+            $("#divTest").html("");
+            var content = "";
+            if (info.length > 0) {
+                for (var i = 0; i < info.length; i++) {
+                    content += " <tr><td>";
+                    content += info[i].TempName + "</td>";
+                    content += " <td>" + info[i].TempDesc + "</td>"; //描述
+                    content += " <td>" + info[i].CreateTime + "</td>";
+                    content += " <td>" + info[i].PersonName + "</td>";
+                    content += " <td><a title=\"查看\" style=\"cursor:pointer;\"  class=\"download\" href=\"/TeachingTemplate/TempFiles/" + info[i].TempName + "\"><img src=\"/images/icon/setup.png\" width=\"16\" height=\"16\" /></a>";
+                    content += " <a title=\"删除\" style=\"cursor:pointer;\" onclick=\"DeleteTemp('" + info[i].Id + "','" + info[i].TempName + "')\"><img src=\"/images/icon/del.png\" width=\"16\" height=\"16\" /></a></td>";
+                    content += "</tr>";
+                }
+                $("#divTest").html(content);
+            }
+        }
+
+        function DeleteTemp(id, filename) {
+            var url = "/TeachingTemplate/TeachingTemplateHandler.ashx";
+            var data = { action: "deleteTemp",id:id,filename:filename };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    alert(res.info);
+                    InitData();
+                }
+            });
+        }
+
+        $(function () {
+            InitData();
+            $('.download').jDownload();
+        })
+    </script>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data">
+    <div class="pageTitle">
+        教学模板上传</div>
+    <div id="contentWrap">
+        <!--表格控件 -->
+        <div id="widget table-widget">
+            <div class="pageTitle">
+                模版描述：<input id="txtDesc" type="text" style="width: 20%; height: 20px; text-align: left;" />
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;请选择上传模板文件：
+                <input id="fileToUpload" name="fileToUpload" type="file" style="width: 20%; height: 20px;
+                    text-align: left;" />
+                <input id="btnAdd" style="margin-left: 100px;" type="button" value="上传模板" onclick="return ajaxFileUpload();" />
+            </div>
+            <div class="pageTitle">
+                教学模板列表
+            </div>
+            <div class="pageColumn">
+                <table>
+                    <thead>
+                        <th width="10%">
+                            模板名称
+                        </th>
+                        <th width="10%">
+                            模板描述
+                        </th>
+                       <!-- <th width="10%">
+                            模板路径
+                        </th>-->
+                        <th width="10%">
+                            上传时间
+                        </th>
+                        <th width="10%">
+                            上传人
+                        </th>
+                        <th width="15%">
+                            操作
+                        </th>
+                    </thead>
+                    <tbody id="divTest">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </form>
+</body>
+</html>

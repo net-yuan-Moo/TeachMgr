@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>用户信息管理</title>
+    <link href="/images/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/javascript/jquery.min.js"></script>
+    <script src="../javascript/common.js" type="text/javascript"></script>
+    <link href="../themes/base/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+    <script src="../javascript/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="../ui/jquery.ui.core.js" type="text/javascript"></script>
+    <script src="../ui/jquery.ui.widget.js" type="text/javascript"></script>
+    <script src="../ui/jquery.ui.mouse.js" type="text/javascript"></script>
+    <script src="../ui/jquery.ui.button.js" type="text/javascript"></script>
+    <script src="../ui/jquery.ui.draggable.js" type="text/javascript"></script>
+    <script src="../ui/jquery.ui.position.js" type="text/javascript"></script>
+    <script src="../ui/jquery.ui.dialog.js" type="text/javascript"></script>
+    <link href="../Styles/jquery.ui.theme.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        $(function () {
+            $('tbody tr:odd').addClass("trLight");
+            InitData();
+        })
+
+        function InitData() {
+            var url = "/Handler/UserHandler.ashx";
+            var data = { action: "getUserList" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    createHtml(res.info);
+                }
+            });
+        }
+
+        function createHtml(info) {
+            $("#divTest").html("");
+            var content = "";
+            if (info.length > 0) {
+                for (var i = 0; i < info.length; i++) {
+                    content += " <tr><td>";
+                    content += info[i].LoginName + "</td>";
+                    content += " <td>************</td>";
+                    var role;
+                    if (info[i].RoleId == "1") {
+                        role = "普通用户";
+                    }
+                    else {
+                        role = "管理员";
+                    }
+                    content += " <td>" + role + "</td>";
+                    content += " <td><a title=\"密码重置\" style=\"cursor:pointer;\" onclick=\"resetPwd('" + info[i].Id + "')\"><img src=\"/images/icon/edit2.png\" width=\"16\" height=\"16\" /></a>";
+                    content += " <a title=\"删除\" style=\"cursor:pointer;\" onclick=\"DeleteTeacher('" + info[i].Id + "')\"><img src=\"/images/icon/del.png\" width=\"16\" height=\"16\" /></a></td>";
+                    content += "</tr>";
+                }
+                $("#divTest").html(content);
+            }
+        }
+
+        function Clear() {
+            $("#txtUserName").val("");
+            $("#txtRoleName").val("1");
+        }
+
+        function AddUser() {
+            var name = $("#txtUserName").val();
+            var role = $("#txtRoleName").val();
+
+            if (name == "") {
+                alert("名称不能为空");
+                return;
+            }
+            if (role == "")
+            {
+                alert("角色不能为空");
+                return;
+            }
+            var url = "/Handler/UserHandler.ashx";
+            var data = { action: "addUser", name: name, role: role };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    alert(res.info);
+                    Clear();
+                    InitData();
+                }
+            });
+        }
+
+        function showAddDiv() {
+            if ($("#divAdd").css("display") == "block") {
+                $("#divAdd").css("display", "none");
+            }
+            else {
+                $("#divAdd").show("slow");
+            }
+        }
+
+        function DeleteTeacher(id) {
+            $("#divDel").dialog({
+                resizable: false,
+                //	            height: 500,
+                width: 300,
+                modal: true,
+                buttons: {
+                    "确定": function () {
+                        var url = "/Handler/UserHandler.ashx";
+                        var data = { action: "delUser", id: id };
+                        AjaxRequest(url, data, function (res) {
+                            if (res.info != null) {
+                                alert(res.info);
+                                InitData();
+                            }
+                        });
+                        $(this).dialog("close");
+                    },
+                    "取消": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+
+        function resetPwd(id) {
+            $("#divReset").dialog({
+                resizable: false,
+                //	            height: 500,
+                width: 300,
+                modal: true,
+                buttons: {
+                    "确定": function () {
+                        var url = "/Handler/UserHandler.ashx";
+                        var data = { action: "resetPwd", id: id };
+                        AjaxRequest(url, data, function (res) {
+                            if (res.info != null) {
+                                alert(res.info);
+                                InitData();
+                            }
+                        });
+                        $(this).dialog("close");
+                    },
+                    "取消": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+    </script>
+    <style type="text/css">
+        body
+        {
+            background: #FFF;
+        }
+    </style>
+</head>
+<body>
+    <div id="divAdd" style="display: none">
+        <div class="pageTitle">
+            用户信息添加</div>
+        <div class="pageColumn">
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width: 10%">
+                            用户名称：
+                        </td>
+                        <td>
+                            <input id="txtUserName" type="text" style="width: 90%" />
+                        </td>
+                        <td style="width: 10%">
+                            用户角色：
+                        </td>
+                        <td>
+                            <select id="selRoleName" style="width: 90%">
+                            <option value="1">普通用户</option>
+                                <option value="0">管理员</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class=" ">
+                        <td colspan="4">
+                            <input id="btnAdd" type="button" value="添加用户" onclick="AddUser();" />
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <input id="btnClear" type="button" value="清空数据" onclick="Clear();" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="contentWrap">
+        <!--表格控件 -->
+        <div id="widget table-widget">
+            <div class="pageTitle">
+                用户信息管理 <a onclick="showAddDiv();" style="float: right; margin-right: 10px; color: Red;
+                    cursor: pointer; padding-left: 10px; height: 31px; line-height: 31px;">添加用户信息</a>
+            </div>
+            <div class="pageColumn">
+                <table>
+                    <thead>
+                        <th width="10%">
+                            用户名称
+                        </th>
+                        <th width="10%">
+                            用户密码
+                        </th>
+                        <th width="10%">
+                            用户角色
+                        </th>
+                        <th width="15%">
+                            操作
+                        </th>
+                    </thead>
+                    <tbody id="divTest">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="divEdit" style="display: none" title="用户信息修改">
+        <div class="pageColumn">
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width: 10%">
+                            用户名称：
+                        </td>
+                        <td>
+                            <input id="txtEditUserName" type="text" style="width: 90%" />
+                        </td>
+                        <td style="width: 10%">
+                            用户角色：
+                        </td>
+                        <td>
+                            <select id="selEditRoleName" style="width: 90%">
+                                <option value="0">管理员</option>
+                                <option value="1">普通用户</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="divDel" title="确认信息" style="display:none">
+    <h1>是否确认删除该条用户信息？</h1></div>
+     <div id="divReset" title="确认信息" style="display:none">
+    <h1>是否确认重置密码？</h1></div>
+</body>
+</html>

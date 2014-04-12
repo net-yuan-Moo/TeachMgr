@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>查看教学信息</title>
+    <link href="/images/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/javascript/jquery.min.js"></script>
+    <script src="../javascript/common.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+        $(function () {
+            InitData();
+        })
+        function InitData() {
+            var url = "/TeachingInfo/TeachingInfoHandler.ashx";
+            var data = { action: "getTeacherList" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    createHtml(res.info);
+                }
+            });
+        }
+
+        function createHtml(info) {
+            $("#divTest").html("");
+            var content = "";
+            if (info.length > 0) {
+                for (var i = 0; i < info.length; i++) {
+                    content += " <tr><td>";
+                    content += info[i].title + "</td>";
+                    content += " <td>" + info[i].createTime + "</td>";
+                    content += " <td>" + info[i].personName + "</td>";
+                    content += " <td><a title=\"查看内容\" style=\"cursor:pointer; color:Blue;\" onclick=\"ShowInfo('" + info[i].Id + "')\">查看内容</a></td>";
+                    content += "</tr>";
+                }
+                $("#divTest").html(content);
+            }
+        }
+
+        //查看内容
+        function ShowInfo(id) {
+            window.open("/TeachingInfo/TeachInfoDetail.html?id=" + id, "_blank");
+        }
+    </script>
+</head>
+<body>
+    <div id="contentWrap">
+        <!--表格控件 -->
+        <div id="widget table-widget">
+            <div class="pageTitle">
+                教学信息列表
+            </div>
+            <div class="pageColumn">
+                <table>
+                    <thead>
+                        <th width="10%">
+                            标题
+                        </th>
+                        <th width="10%">
+                            创建时间
+                        </th>
+                        <th width="10%">
+                            创建人
+                        </th>
+                        <th width="15%">
+                            查看信息
+                        </th>
+                    </thead>
+                    <tbody id="divTest">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>教学文件下载</title>
+    <link href="/images/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/javascript/jquery.min.js"></script>
+    <script src="../javascript/common.js" type="text/javascript"></script>
+     <script src="../ui/jquery-ui.js" type="text/javascript"></script>
+    <link href="../themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../javascript/jquery.jdownload.js" type="text/javascript"></script>
+    <link href="../Styles/jquery.jdownload.css" rel="stylesheet" type="text/css" />
+    <script language="javascript" type="text/javascript">
+        function InitData() {
+            var url = "/TeachingFileMgr/TeachingFileMgrHandler.ashx";
+            var data = { action: "getList" };
+            AjaxRequest(url, data, function (res) {
+                if (res.info != null) {
+                    createHtml(res.info);
+                }
+            });
+        }
+
+        function createHtml(info) {
+            $("#divTest").html("");
+            var content = "";
+            if (info.length > 0) {
+                for (var i = 0; i < info.length; i++) {
+                    content += " <tr><td>";
+                    content += info[i].FileName + "</td>";
+                    content += " <td>" + info[i].FileDesc + "</td>"; //描述
+                    content += " <td>" + info[i].CreateTime + "</td>";
+                    content += " <td>" + info[i].PersonName + "</td>";
+                    content += " <td><a title=\"下载文件\" class=\"download\" style=\"cursor:pointer; color:Blue;\" href=\"/TeachingFileMgr/TeachFiles/" + info[i].FileName + "\">下载文件</a>";
+                    content += "</tr>";
+                }
+                $("#divTest").html(content);
+            }
+        }
+
+        function DownloadFile(filename) {
+            var path = "/TeachingFileMgr/TeachFiles/" + filename;
+            window.open(path);
+        }
+
+        $(function () {
+            InitData();
+            $('.download').jDownload();
+        })
+    </script>
+</head>
+<body>
+    <div id="contentWrap">
+        <!--表格控件 -->
+        <div id="widget table-widget">
+            <div class="pageTitle">
+                教学文件列表
+            </div>
+            <div class="pageColumn">
+                <table>
+                    <thead>
+                        <th width="10%">
+                            文件名称
+                        </th>
+                        <th width="10%">
+                            文件描述
+                        </th>
+                        <th width="10%">
+                            上传时间
+                        </th>
+                        <th width="10%">
+                            上传人
+                        </th>
+                        <th width="15%">
+                            下载
+                        </th>
+                    </thead>
+                    <tbody id="divTest">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
